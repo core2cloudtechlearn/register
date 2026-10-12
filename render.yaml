@@ -1,22 +1,20 @@
-# Render Blueprint: one web service + a persistent disk for the SQLite database.
-# The disk needs a paid plan (starter is the cheapest that supports disks).
+# Render Blueprint, FREE plan. Render's free web service has no disk, so registrations
+# are stored in a free Turso database (TURSO_URL + TURSO_AUTH_TOKEN) instead.
 services:
   - type: web
     name: genai-workshop
     runtime: docker
-    plan: starter
+    plan: free
     region: singapore
     healthCheckPath: /api/config
     autoDeploy: true
-    disk:
-      name: registrations
-      mountPath: /data
-      sizeGB: 1
     envVars:
-      - key: DB_PATH
-        value: /data/registrations.db
       - key: ADMIN_PASSWORD
         sync: false        # you type this in the Render dashboard
+      - key: TURSO_URL
+        sync: false        # libsql://<your-db>.turso.io
+      - key: TURSO_AUTH_TOKEN
+        sync: false        # token from the Turso dashboard
       - key: WHATSAPP_NUMBER
         value: "917338884345"
       - key: CONTACT_EMAIL

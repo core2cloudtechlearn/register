@@ -1,12 +1,12 @@
 // Core2CloudX GenAI workshop: registration site + admin dashboard.
-// Zero npm dependencies. Needs Node 22.5+ (uses the built-in node:sqlite).
+// Zero npm dependencies. Needs Node 22.5+ (built-in node:sqlite locally, or Turso over HTTPS; see store.js).
 //   ADMIN_PASSWORD=... UPI_ID=name@bank node server.js
 'use strict';
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
-const { DatabaseSync } = require('node:sqlite');
+const store = require('./store');
 
 const PORT = Number(process.env.PORT || 3000);
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
@@ -23,6 +23,8 @@ const PAYMENTS_ON = process.env.PAYMENTS === 'on';
 const WHATSAPP = (process.env.WHATSAPP_NUMBER || '917338884345').replace(/\D/g, ''); // WhatsApp + call number, with country code
 const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'connect@core2cloud.in';
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'data', 'registrations.db');
+const TURSO_URL = process.env.TURSO_URL || ''; // libsql://your-db.turso.io, for hosts with no disk
+const TURSO_AUTH_TOKEN = process.env.TURSO_AUTH_TOKEN || '';
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const MAX_BODY = 20 * 1024;
 
@@ -44,11 +46,10 @@ const WORKSHOP = {
   },
 };
 
-fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-const db = new DatabaseSync(DB_PATH);
-db.exec(`
-  PRAGMA journal_mode = WAL;
-  CREATE TABLE IF NOT EXISTS registrations (
+const db = store.open({ tursoUrl: TURSO_URL, tursoToken: TURSO_AUTH_TOKEN, dbPath: DB_PATH });
+
+async function initDb() {
+  await db.exec(`CREATE TABLE IF NOT EXISTS registrations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     ref TEXT NOT NULL UNIQUE,
     created_at TEXT NOT NULL,
@@ -67,27 +68,27 @@ db.exec(`
     pay_status TEXT NOT NULL,
     txn_ref TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT ''
-  );
-`);
-db.exec(`CREATE TABLE IF NOT EXISTS rp_orders (
-  order_id TEXT PRIMARY KEY, ref TEXT NOT NULL, amount_paise INTEGER NOT NULL, created_at TEXT NOT NULL)`);
-const haveCols = new Set(db.prepare('PRAGMA table_info(registrations)').all().map(c => c.name));
-for (const [col, ddl] of [['rzp_payment_id', "TEXT NOT NULL DEFAULT ''"], ['pay_method', "TEXT NOT NULL DEFAULT ''"], ['paid_at', "TEXT NOT NULL DEFAULT ''"]]) {
-  if (!haveCols.has(col)) db.exec(`ALTER TABLE registrations ADD COLUMN ${col} ${ddl}`);
+  )`);
+  await db.exec(`CREATE TABLE IF NOT EXISTS rp_orders (
+    order_id TEXT PRIMARY KEY, ref TEXT NOT NULL, amount_paise INTEGER NOT NULL, created_at TEXT NOT NULL)`);
+  const have = new Set((await db.all('PRAGMA table_info(registrations)')).map(c => c.name));
+  for (const [col, ddl] of [['rzp_payment_id', "TEXT NOT NULL DEFAULT ''"], ['pay_method', "TEXT NOT NULL DEFAULT ''"], ['paid_at', "TEXT NOT NULL DEFAULT ''"]]) {
+    if (!have.has(col)) await db.exec(`ALTER TABLE registrations ADD COLUMN ${col} ${ddl}`);
+  }
 }
 const PAY_STATUSES = ['pending', 'contacted', 'submitted', 'paid', 'verify', 'waived', 'cancelled'];
 
 const q = {
-  insert: db.prepare(`INSERT INTO registrations
+  insert: (...a) => db.run(`INSERT INTO registrations
     (ref, created_at, updated_at, name, email, phone, category, organisation, city, group_name, group_size, existing_user_id, source, amount, pay_status)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`),
-  byRef: db.prepare('SELECT * FROM registrations WHERE ref = ?'),
-  all: db.prepare('SELECT * FROM registrations ORDER BY id DESC'),
-  setTxn: db.prepare("UPDATE registrations SET txn_ref = ?, pay_status = 'submitted', updated_at = ? WHERE ref = ? AND pay_status IN ('pending','submitted')"),
-  addOrder: db.prepare('INSERT INTO rp_orders (order_id, ref, amount_paise, created_at) VALUES (?,?,?,?)'),
-  order: db.prepare('SELECT * FROM rp_orders WHERE order_id = ?'),
-  markPaid: db.prepare("UPDATE registrations SET pay_status = 'paid', rzp_payment_id = ?, pay_method = ?, paid_at = ?, updated_at = ? WHERE ref = ? AND pay_status != 'paid'"),
-  admin: db.prepare('UPDATE registrations SET pay_status = ?, notes = ?, updated_at = ? WHERE id = ?'),
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, a),
+  byRef: ref => db.get('SELECT * FROM registrations WHERE ref = ?', [ref]),
+  all: () => db.all('SELECT * FROM registrations ORDER BY id DESC'),
+  setTxn: (txn, now, ref) => db.run("UPDATE registrations SET txn_ref = ?, pay_status = 'submitted', updated_at = ? WHERE ref = ? AND pay_status IN ('pending','submitted')", [txn, now, ref]),
+  addOrder: (...a) => db.run('INSERT INTO rp_orders (order_id, ref, amount_paise, created_at) VALUES (?,?,?,?)', a),
+  order: id => db.get('SELECT * FROM rp_orders WHERE order_id = ?', [id]),
+  markPaid: (...a) => db.run("UPDATE registrations SET pay_status = 'paid', rzp_payment_id = ?, pay_method = ?, paid_at = ?, updated_at = ? WHERE ref = ? AND pay_status != 'paid'", a),
+  admin: (...a) => db.run('UPDATE registrations SET pay_status = ?, notes = ?, updated_at = ? WHERE id = ?', a),
 };
 
 // ---------- helpers ----------
@@ -123,14 +124,14 @@ function readRaw(req) {
 const hmacHex = (secret, data) => crypto.createHmac('sha256', secret).update(data).digest('hex');
 
 // Mark the registration behind a Razorpay order as paid. Safe to call twice (verify + webhook).
-function settleOrder(orderId, paymentId, method, paidPaise) {
-  const o = q.order.get(orderId);
+async function settleOrder(orderId, paymentId, method, paidPaise) {
+  const o = await q.order(orderId);
   if (!o) return { ok: false, why: 'unknown_order' };
   if (paidPaise != null && Number(paidPaise) !== o.amount_paise) return { ok: false, why: 'amount_mismatch' };
-  const reg = q.byRef.get(o.ref);
+  const reg = await q.byRef(o.ref);
   if (!reg || reg.amount * 100 !== o.amount_paise) return { ok: false, why: 'amount_mismatch' };
   const now = new Date().toISOString();
-  q.markPaid.run(String(paymentId || ''), String(method || 'razorpay').slice(0, 20), now, now, o.ref);
+  await q.markPaid(String(paymentId || ''), String(method || 'razorpay').slice(0, 20), now, now, o.ref);
   return { ok: true, ref: o.ref };
 }
 
@@ -206,7 +207,7 @@ async function handleApi(req, res, url) {
     for (let i = 0; i < 5; i++) {
       const ref = makeRef();
       try {
-        q.insert.run(ref, now, now, name, email, phone, b.category, organisation, city, groupName, groupSize, existingId, source, amount, status);
+        await q.insert(ref, now, now, name, email, phone, b.category, organisation, city, groupName, groupSize, existingId, source, amount, status);
         return send(res, 201, { ok: true, ref, amount, status, category: cat.label });
       } catch (e) {
         if (/registrations\.email/.test(e.message)) {
@@ -224,7 +225,7 @@ async function handleApi(req, res, url) {
     let b; try { b = await readJson(req); } catch { return send(res, 400, { error: 'Invalid request.' }); }
     const txn = clean(b.txn_ref, 60), ref = clean(b.ref, 20).toUpperCase();
     if (txn.length < 6) return send(res, 422, { error: 'Enter the UPI transaction ID (12 digits) from your payment app.' });
-    const r = q.setTxn.run(txn, new Date().toISOString(), ref);
+    const r = await q.setTxn(txn, new Date().toISOString(), ref);
     if (!r.changes) return send(res, 404, { error: 'Registration not found or already confirmed.' });
     return send(res, 200, { ok: true });
   }
@@ -233,7 +234,7 @@ async function handleApi(req, res, url) {
     if (!RZP_ON || !PAYMENTS_ON) return send(res, 503, { error: 'Online payment is not switched on.' });
     if (rateLimited(ip, 15, 60 * 60 * 1000)) return send(res, 429, { error: 'Too many attempts. Please try again later.' });
     let b; try { b = await readJson(req); } catch { return send(res, 400, { error: 'Invalid request.' }); }
-    const reg = q.byRef.get(clean(b.ref, 20).toUpperCase());
+    const reg = await q.byRef(clean(b.ref, 20).toUpperCase());
     if (!reg) return send(res, 404, { error: 'Registration not found.' });
     if (reg.pay_status === 'paid') return send(res, 409, { error: 'This registration is already paid.' });
     if (reg.amount <= 0 || !['pending', 'submitted'].includes(reg.pay_status)) return send(res, 409, { error: 'No payment is due for this registration.' });
@@ -248,7 +249,7 @@ async function handleApi(req, res, url) {
       order = await r.json();
       if (!r.ok || !order.id) throw new Error(JSON.stringify(order).slice(0, 300));
     } catch (e) { console.error('Razorpay order failed:', e.message); return send(res, 502, { error: 'Could not start the payment. Please try again in a moment.' }); }
-    q.addOrder.run(order.id, reg.ref, reg.amount * 100, new Date().toISOString());
+    await q.addOrder(order.id, reg.ref, reg.amount * 100, new Date().toISOString());
     return send(res, 200, { orderId: order.id, amount: reg.amount * 100, keyId: RZP_KEY_ID, name: reg.name, email: reg.email, phone: reg.phone, ref: reg.ref });
   }
 
@@ -258,7 +259,7 @@ async function handleApi(req, res, url) {
     let b; try { b = await readJson(req); } catch { return send(res, 400, { error: 'Invalid request.' }); }
     const oid = clean(b.razorpay_order_id, 60), pid = clean(b.razorpay_payment_id, 60), sig = clean(b.razorpay_signature, 128);
     if (!oid || !pid || !sig || !safeEq(sig, hmacHex(RZP_KEY_SECRET, oid + '|' + pid))) return send(res, 400, { error: 'Payment could not be verified. If money was deducted it will be matched automatically, or contact us with your reference.' });
-    const r = settleOrder(oid, pid, 'razorpay');
+    const r = await settleOrder(oid, pid, 'razorpay');
     return r.ok ? send(res, 200, { ok: true, ref: r.ref }) : send(res, 400, { error: 'Payment could not be matched. Please contact us with your payment ID.' });
   }
 
@@ -269,7 +270,7 @@ async function handleApi(req, res, url) {
     let ev; try { ev = JSON.parse(raw.toString()); } catch { return send(res, 400, { error: 'Invalid request.' }); }
     const pay = ev.payload && ev.payload.payment && ev.payload.payment.entity;
     if ((ev.event === 'payment.captured' || ev.event === 'order.paid') && pay && pay.order_id) {
-      const r = settleOrder(pay.order_id, pay.id, pay.method, pay.amount);
+      const r = await settleOrder(pay.order_id, pay.id, pay.method, pay.amount);
       if (!r.ok) console.error('Webhook could not settle', pay.order_id, r.why);
     }
     return send(res, 200, { ok: true }); // 200 for any validly signed event so Razorpay does not keep retrying
@@ -288,15 +289,15 @@ async function handleApi(req, res, url) {
   }
   if (url.pathname.startsWith('/api/admin/')) {
     if (!isAdmin(req)) return send(res, 401, { error: 'Not signed in.' });
-    if (req.method === 'GET' && url.pathname === '/api/admin/registrations') return send(res, 200, { rows: q.all.all() });
+    if (req.method === 'GET' && url.pathname === '/api/admin/registrations') return send(res, 200, { rows: await q.all() });
     if (req.method === 'GET' && url.pathname === '/api/admin/export.csv') {
-      return send(res, 200, '﻿' + toCsv(q.all.all()), { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="registrations.csv"' });
+      return send(res, 200, '﻿' + toCsv(await q.all()), { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="registrations.csv"' });
     }
     const m = /^\/api\/admin\/registrations\/(\d+)$/.exec(url.pathname);
     if (req.method === 'PATCH' && m) {
       let b; try { b = await readJson(req); } catch { return send(res, 400, { error: 'Invalid request.' }); }
       if (!PAY_STATUSES.includes(b.pay_status)) return send(res, 422, { error: 'Unknown status.' });
-      q.admin.run(b.pay_status, clean(b.notes, 500), new Date().toISOString(), Number(m[1]));
+      await q.admin(b.pay_status, clean(b.notes, 500), new Date().toISOString(), Number(m[1]));
       return send(res, 200, { ok: true });
     }
   }
@@ -316,12 +317,17 @@ function serveStatic(req, res, url) {
   });
 }
 
-http.createServer((req, res) => {
-  const url = new URL(req.url, 'http://x');
-  const run = url.pathname.startsWith('/api/') ? handleApi(req, res, url) : (serveStatic(req, res, url), null);
-  if (run) run.catch(e => { console.error(e); if (!res.headersSent) send(res, 500, { error: 'Server error.' }); });
-}).listen(PORT, () => {
-  console.log(`Registration:  http://localhost:${PORT}/`);
-  console.log(`Admin:         http://localhost:${PORT}/admin`);
-  console.log(PAYMENTS_ON ? (RZP_ON ? `Payments: ON, Razorpay (${RZP_KEY_ID.startsWith('rzp_live') ? 'LIVE' : 'test'} mode)` : 'Payments: ON, manual UPI') : 'Payments: OFF (registration only; send payment links on WhatsApp)');
-});
+async function main() {
+  await initDb();
+  http.createServer((req, res) => {
+    const url = new URL(req.url, 'http://x');
+    const run = url.pathname.startsWith('/api/') ? handleApi(req, res, url) : (serveStatic(req, res, url), null);
+    if (run) run.catch(e => { console.error(e); if (!res.headersSent) send(res, 500, { error: 'Server error.' }); });
+  }).listen(PORT, () => {
+    console.log(`Registration:  http://localhost:${PORT}/`);
+    console.log(`Admin:         http://localhost:${PORT}/admin`);
+    console.log('Storage:       ' + db.kind);
+    console.log(PAYMENTS_ON ? (RZP_ON ? `Payments: ON, Razorpay (${RZP_KEY_ID.startsWith('rzp_live') ? 'LIVE' : 'test'} mode)` : 'Payments: ON, manual UPI') : 'Payments: OFF (registration only; send payment links on WhatsApp)');
+  });
+}
+main().catch(e => { console.error('Could not start:', e.message); process.exit(1); });
