@@ -1,0 +1,14 @@
+{
+  "name": "core2cloudx-genai-workshop-registration",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Registration site and admin dashboard for the 3-day GenAI workshop",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --env-file=.env server.js"
+  },
+  "engines": {
+    "node": ">=22.5"
+  }
+}

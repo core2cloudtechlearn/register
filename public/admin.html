@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Registrations Dashboard | Core2CloudX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070f2b;--panel:#0e1a42;--panel2:#13224f;--line:rgba(255,255,255,.12);--ink:#eef3ff;--muted:#9fb0da;
+  --blue:#2f7bff;--cyan:#4fd1ff;--gold:#ffc83d;--green:#36d48a;--red:#ff6b6b;--amber:#ffb454;--violet:#a58bff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Poppins,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:18px 16px 60px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.top h1{font-size:22px;font-weight:800}.top small{display:block;color:var(--muted);font-weight:400;font-size:13px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button,.b{font:inherit;font-weight:600;font-size:13px;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;text-decoration:none}
+button:hover,.b:hover{background:var(--panel2)}
+button:focus-visible,.b:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+.primary{background:var(--blue);border-color:var(--blue)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:18px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.kpi .k{font-size:11px;letter-spacing:1.5px;color:var(--muted);font-weight:600;text-transform:uppercase}
+.kpi .v{font-size:30px;font-weight:800;line-height:1.15;margin-top:4px}
+.kpi .d{font-size:12px;color:var(--muted);margin-top:2px}
+.kpi.money .v{color:var(--green)}.kpi.warn .v{color:var(--amber)}
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-top:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.card h2{font-size:14px;font-weight:700;margin-bottom:12px}
+.card h2 small{color:var(--muted);font-weight:400;margin-left:6px}
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:130px 1fr 44px;gap:10px;align-items:center;font-size:13px}
+.bar .t{height:10px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden}
+.bar .t i{display:block;height:100%;border-radius:6px;background:var(--blue)}
+.bar .n{text-align:right;font-weight:700}
+.bar span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chart{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-size:11px;font-family:Poppins,sans-serif}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.tools input,.tools select{font:inherit;font-size:14px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.tools input{flex:1;min-width:200px}
+.tablewrap{overflow-x:auto;margin-top:10px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th{position:sticky;top:0;text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:11px 12px;background:var(--panel2);font-weight:600;white-space:nowrap}
+td{padding:11px 12px;border-top:1px solid var(--line);vertical-align:top}
+td .m{color:var(--muted);font-size:12px}
+.ref{font-weight:700;letter-spacing:1px;color:var(--gold);white-space:nowrap}
+.chip{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+.s-pending{background:rgba(255,180,84,.16);color:var(--amber)}
+.s-contacted{background:rgba(79,209,255,.16);color:var(--cyan)}
+.s-submitted{background:rgba(79,209,255,.16);color:var(--cyan)}
+.s-paid{background:rgba(54,212,138,.18);color:var(--green)}
+.s-verify{background:rgba(165,139,255,.18);color:var(--violet)}
+.s-waived{background:rgba(54,212,138,.12);color:var(--green)}
+.s-cancelled{background:rgba(255,107,107,.15);color:var(--red)}
+td select,td textarea{font:inherit;font-size:13px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+td textarea{resize:vertical;min-height:34px}
+.empty{padding:36px;text-align:center;color:var(--muted)}
+.login{max-width:380px;margin:12vh auto 0;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px}
+.login h1{font-size:20px;font-weight:800;margin-bottom:4px}.login p{color:var(--muted);margin-bottom:16px}
+.login input{width:100%;font:inherit;font-size:16px;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);margin-bottom:12px}
+.login button{width:100%;padding:12px}
+.msg{color:#ffb3b3;font-size:13px;margin-bottom:10px}
+.live{color:var(--muted);font-size:12px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}.bar{grid-template-columns:100px 1fr 38px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const app = document.getElementById('app');
+const rupees = n => '₹' + Number(n).toLocaleString('en-IN');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const CAT = { professional: 'Professional', student: 'Student', college_group: 'College group', existing: 'Existing user' };
+const STATUS = { pending: 'New', contacted: 'WhatsApp sent', submitted: 'Txn submitted', paid: 'Paid', verify: 'Verify user', waived: 'Free (verified)', cancelled: 'Cancelled' };
+let rows = [], filter = { q: '', status: '', cat: '' }, timer, lastLoad;
+
+function loginView(msg = '') {
+  clearInterval(timer);
+  app.innerHTML = `<form class="login" id="lf"><h1>Registrations</h1><p>Core2CloudX GenAI workshop dashboard</p>
+    ${msg ? `<div class="msg" role="alert">${esc(msg)}</div>` : ''}
+    <label for="pw" style="display:block;font-weight:600;margin-bottom:5px">Admin password</label>
+    <input id="pw" type="password" autocomplete="current-password" required autofocus>
+    <button class="primary" type="submit">Sign in</button></form>`;
+  document.getElementById('lf').onsubmit = async e => {
+    e.preventDefault();
+    const r = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: document.getElementById('pw').value }) });
+    if (r.ok) load(true); else loginView((await r.json().catch(() => ({}))).error || 'Could not sign in.');
+  };
+}
+
+async function load(first) {
+  const r = await fetch('/api/admin/registrations');
+  if (r.status === 401) return loginView();
+  if (!r.ok) return;
+  rows = (await r.json()).rows; lastLoad = new Date();
+  if (first || !document.getElementById('kpis')) { shell(); timer = setInterval(() => { if (!document.hidden && !document.activeElement?.closest('td')) load(); }, 30000); }
+  draw();
+}
+
+const seats = r => r.category === 'college_group' ? (r.group_size || 1) : 1;
+const live = rows => rows.filter(r => r.pay_status !== 'cancelled');
+
+function shell() {
+  app.innerHTML = `
+  <div class="top"><div><h1>Registrations <small>Build Your Own AI Agent · 17-19 Oct 2026</small></h1></div>
+    <div class="btns"><span class="live" id="live" style="align-self:center"></span><button id="refresh">Refresh</button>
+    <a class="b primary" href="/api/admin/export.csv">Export CSV</a><button id="logout">Sign out</button></div></div>
+  <div class="kpis" id="kpis"></div>
+  <div class="grid"><div class="card"><h2>Registrations per day <small id="perDayNote"></small></h2><div id="perDay"></div></div>
+    <div class="card"><h2>Seats by registration type</h2><div class="bars" id="byCat"></div><h2 style="margin-top:20px">By source <small>from ?src= in the link</small></h2><div class="bars" id="bySrc"></div></div></div>
+  <details class="card" style="margin-top:12px" id="waCfg"><summary style="cursor:pointer;font-weight:700">WhatsApp message &amp; payment links <small style="color:var(--muted);font-weight:400">saved in this browser</small></summary>
+    <div style="display:grid;gap:10px;margin-top:12px">
+      <label for="wt" style="font-weight:600">Message template <small style="color:var(--muted);font-weight:400">use {name} {ref} {payment}</small></label>
+      <textarea id="wt" rows="4" style="font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%"></textarea>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+        <div><label for="lp" style="font-weight:600">Link for professionals (₹999)</label><input id="lp" placeholder="https://rzp.io/..." style="width:100%;font:inherit;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)"></div>
+        <div><label for="ls" style="font-weight:600">Link for students (₹499)</label><input id="ls" placeholder="https://rzp.io/..." style="width:100%;font:inherit;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)"></div>
+        <div><label for="lg" style="font-weight:600">Link for college groups</label><input id="lg" placeholder="Group fee depends on size; paste per message" style="width:100%;font:inherit;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)"></div>
+      </div>
+      <div style="color:var(--muted);font-size:12px">Create these links in Razorpay Dashboard &gt; Payment Links. Clicking "Send on WhatsApp" opens WhatsApp with the message filled in and marks the person "WhatsApp sent".</div>
+    </div></details>
+  <div class="tools"><input id="q" type="search" placeholder="Search name, email, phone, college, reference" aria-label="Search">
+    <select id="fs" aria-label="Filter by status"><option value="">All statuses</option>${Object.entries(STATUS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select>
+    <select id="fc" aria-label="Filter by type"><option value="">All types</option>${Object.entries(CAT).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div>
+  <div class="tablewrap"><table><thead><tr><th>Ref / date</th><th>Person</th><th>Type</th><th>Organisation</th><th>Amount</th><th>Status</th><th>Payment ID</th><th>Notes</th><th>WhatsApp</th></tr></thead><tbody id="tb"></tbody></table></div>`;
+  document.getElementById('refresh').onclick = () => load();
+  initWa();
+  document.getElementById('logout').onclick = async () => { await fetch('/api/admin/logout', { method: 'POST' }); loginView(); };
+  document.getElementById('q').oninput = e => { filter.q = e.target.value.toLowerCase(); drawTable(); };
+  document.getElementById('fs').onchange = e => { filter.status = e.target.value; drawTable(); };
+  document.getElementById('fc').onchange = e => { filter.cat = e.target.value; drawTable(); };
+}
+
+function draw() {
+  document.getElementById('live').textContent = 'Updated ' + lastLoad.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  const L = live(rows);
+  const paid = rows.filter(r => r.pay_status === 'paid');
+  const collected = paid.reduce((a, r) => a + r.amount, 0);
+  const owed = rows.filter(r => ['pending', 'submitted'].includes(r.pay_status));
+  const outstanding = owed.reduce((a, r) => a + r.amount, 0);
+  const toVerify = rows.filter(r => ['submitted', 'verify'].includes(r.pay_status)).length;
+  const totalSeats = L.reduce((a, r) => a + seats(r), 0);
+  const today = new Date().toDateString();
+  const todayN = L.filter(r => new Date(r.created_at).toDateString() === today).length;
+  const kpi = (k, v, d, c = '') => `<div class="kpi ${c}"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`;
+  const fresh = rows.filter(r => r.pay_status === 'pending').length;
+  const expected = L.reduce((a, r) => a + r.amount, 0);
+  document.getElementById('kpis').innerHTML =
+    kpi('Registrations', L.length, `${todayN} today`) +
+    kpi('Seats', totalSeats, 'groups counted per student') +
+    kpi('To contact', fresh, 'new, no WhatsApp sent yet', fresh ? 'warn' : '') +
+    kpi('Paid', paid.length, `${rupees(collected)} marked paid`, 'money') +
+    kpi('Total fees', rupees(expected), 'if everyone pays');
+  perDay(L); bars('byCat', Object.entries(CAT).map(([k, v]) => [v, L.filter(r => r.category === k).reduce((a, r) => a + seats(r), 0)]), 'seats');
+  const src = {}; L.forEach(r => src[r.source] = (src[r.source] || 0) + 1);
+  bars('bySrc', Object.entries(src).sort((a, b) => b[1] - a[1]).slice(0, 8), 'regs');
+  drawTable();
+}
+
+function bars(id, pairs, unit) {
+  const el = document.getElementById(id), max = Math.max(1, ...pairs.map(p => p[1]));
+  el.innerHTML = pairs.length ? pairs.map(([n, v]) => `<div class="bar"><span title="${esc(n)}">${esc(n)}</span><span class="t"><i style="width:${v / max * 100}%"></i></span><span class="n">${v}</span></div>`).join('') : '<div class="empty" style="padding:8px">No data yet</div>';
+}
+
+function perDay(L) {
+  const el = document.getElementById('perDay'), note = document.getElementById('perDayNote');
+  if (!L.length) { el.innerHTML = '<div class="empty">No registrations yet. They will appear here as people sign up.</div>'; note.textContent = ''; return; }
+  const days = 14, end = new Date(); end.setHours(0, 0, 0, 0);
+  const keys = Array.from({ length: days }, (_, i) => { const d = new Date(end); d.setDate(d.getDate() - (days - 1 - i)); return d; });
+  const counts = keys.map(d => L.filter(r => new Date(r.created_at).toDateString() === d.toDateString()).length);
+  const max = Math.max(...counts), top = Math.max(4, Math.ceil(max / 4) * 4);
+  const W = 560, H = 190, pl = 28, pb = 26, pt = 10, bw = (W - pl) / days;
+  let s = '';
+  for (let i = 0; i <= 4; i++) { const y = pt + (H - pb - pt) * (1 - i / 4); s += `<line x1="${pl}" x2="${W}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,.1)"/><text x="${pl - 6}" y="${y + 4}" text-anchor="end">${Math.round(top * i / 4)}</text>`; }
+  counts.forEach((c, i) => {
+    const h = (H - pb - pt) * c / top, x = pl + i * bw + bw * .18, y = H - pb - h, last = i === days - 1;
+    s += `<rect x="${x}" y="${y}" width="${bw * .64}" height="${Math.max(h, 0)}" rx="4" fill="${last ? 'var(--gold)' : 'var(--blue)'}"><title>${keys[i].toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}: ${c}</title></rect>`;
+    if (c) s += `<text x="${x + bw * .32}" y="${y - 4}" text-anchor="middle" style="fill:var(--ink);font-weight:700">${c}</text>`;
+    if (i % 2 === (days - 1) % 2) s += `<text x="${x + bw * .32}" y="${H - 8}" text-anchor="middle">${keys[i].getDate()}/${keys[i].getMonth() + 1}</text>`;
+  });
+  el.innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Registrations per day, last 14 days">${s}</svg>`;
+  note.textContent = 'last 14 days';
+}
+
+function drawTable() {
+  const f = rows.filter(r => (!filter.status || r.pay_status === filter.status) && (!filter.cat || r.category === filter.cat) &&
+    (!filter.q || [r.name, r.email, r.phone, r.organisation, r.ref, r.group_name, r.city].join(' ').toLowerCase().includes(filter.q)));
+  const tb = document.getElementById('tb');
+  if (!f.length) { tb.innerHTML = `<tr><td colspan="9" class="empty">${rows.length ? 'No registrations match this filter.' : 'No registrations yet.'}</td></tr>`; return; }
+  tb.innerHTML = f.map(r => `<tr data-id="${r.id}">
+    <td><div class="ref">${esc(r.ref)}</div><div class="m">${new Date(r.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</div></td>
+    <td><b>${esc(r.name)}</b><div class="m">${esc(r.email)}</div><div class="m">${esc(r.phone)}${r.city ? ' · ' + esc(r.city) : ''}</div></td>
+    <td>${CAT[r.category] || esc(r.category)}${r.category === 'college_group' ? `<div class="m">${r.group_size} students</div><div class="m">${esc(r.group_name)}</div>` : ''}${r.category === 'existing' ? `<div class="m">${esc(r.existing_user_id)}</div>` : ''}<div class="m">via ${esc(r.source)}</div></td>
+    <td>${esc(r.organisation) || '<span class="m">-</span>'}</td>
+    <td><b>${r.amount ? rupees(r.amount) : 'Free'}</b></td>
+    <td><span class="chip s-${r.pay_status}">${STATUS[r.pay_status]}</span><select class="st" aria-label="Change status for ${esc(r.name)}" style="margin-top:6px">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}" ${k === r.pay_status ? 'selected' : ''}>${v}</option>`).join('')}</select></td>
+    <td>${r.rzp_payment_id ? `<code>${esc(r.rzp_payment_id)}</code><div class="m">Razorpay${r.pay_method ? ' · ' + esc(r.pay_method) : ''}</div>` : r.txn_ref ? `<code>${esc(r.txn_ref)}</code><div class="m">manual UPI</div>` : '<span class="m">-</span>'}</td>
+    <td><button type="button" class="wa b" data-id="${r.id}" ${r.pay_status === 'cancelled' ? 'disabled' : ''}>Send on WhatsApp</button></td>
+    <td><textarea class="nt" rows="1" aria-label="Notes for ${esc(r.name)}" placeholder="Add note">${esc(r.notes)}</textarea></td></tr>`).join('');
+  tb.querySelectorAll('tr').forEach(tr => {
+    const id = tr.dataset.id, save = async () => {
+      const row = rows.find(r => r.id == id), pay_status = tr.querySelector('.st').value, notes = tr.querySelector('.nt').value;
+      if (row.pay_status === pay_status && row.notes === notes) return;
+      const r = await fetch('/api/admin/registrations/' + id, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pay_status, notes }) });
+      if (r.status === 401) return loginView('Session expired. Sign in again.');
+      if (r.ok) { row.pay_status = pay_status; row.notes = notes; draw(); }
+    };
+    tr.querySelector('.st').onchange = save; tr.querySelector('.nt').onchange = save;
+    tr.querySelector('.wa').onclick = () => {
+      const row = rows.find(r => r.id == id);
+      window.open('https://wa.me/' + waNumber(row.phone) + '?text=' + encodeURIComponent(waMessage(row)), '_blank', 'noopener');
+      if (row.pay_status === 'pending') setStatus(row, 'contacted');
+    };
+  });
+}
+// ---- WhatsApp sending ----
+const WA_DEFAULT = ['Hi {name}, thank you for registering for the Core2CloudX GenAI workshop (17, 18 & 19 Oct).', '', 'Your reference: {ref}', '{payment}', '', 'We will share the joining details once your seat is confirmed.'].join('\n');
+const lsGet = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+function initWa() {
+  const map = { wt: ['c2c_wa_tpl', WA_DEFAULT], lp: ['c2c_link_professional', ''], ls: ['c2c_link_student', ''], lg: ['c2c_link_group', ''] };
+  for (const [id, [k, d]] of Object.entries(map)) { const el = document.getElementById(id); el.value = lsGet(k, d); el.oninput = () => lsSet(k, el.value); }
+}
+function waNumber(p) { let d = String(p).replace(/\D/g, ''); if (d.length === 10) d = '91' + d; return d; }
+function waMessage(r) {
+  const link = r.category === 'professional' ? lsGet('c2c_link_professional', '') : r.category === 'student' ? lsGet('c2c_link_student', '') : r.category === 'college_group' ? lsGet('c2c_link_group', '') : '';
+  const fee = rupees(r.amount) + (r.category === 'college_group' ? ` for ${r.group_size} students` : '');
+  const payment = r.amount > 0 ? `Your fee is ${fee}.${link ? ' Please pay here: ' + link : ''}` : 'Your seat is free as an existing user.';
+  return lsGet('c2c_wa_tpl', WA_DEFAULT).replace(/\{name\}/g, r.name.split(' ')[0]).replace(/\{ref\}/g, r.ref).replace(/\{payment\}/g, payment);
+}
+async function setStatus(row, pay_status) {
+  const r = await fetch('/api/admin/registrations/' + row.id, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pay_status, notes: row.notes }) });
+  if (r.ok) { row.pay_status = pay_status; draw(); }
+}
+
+load(true);
+</script></body></html>

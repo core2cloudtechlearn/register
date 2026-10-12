@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Register | Build Your Own AI Agent in 3 Days | Core2CloudX</title>
+<meta name="description" content="3-day live online GenAI workshop, 17-19 Oct 2026. Build your own custom AI agent. Festive prices from ₹299.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#070f2b;--navy2:#0d1b45;--blue:#2f7bff;--cyan:#4fd1ff;--gold:#ffc83d;--gold2:#ff9f1c;--green:#36d48a;--red:#ff6b6b;
+  --ink:#eef3ff;--muted:#a9b6d9;--card:rgba(255,255,255,.06);--line:rgba(255,255,255,.14)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Poppins,system-ui,sans-serif;color:var(--ink);line-height:1.5;min-height:100vh;
+  background:radial-gradient(900px 600px at 90% -5%,rgba(255,159,28,.18),transparent 60%),radial-gradient(800px 700px at -10% 40%,rgba(47,123,255,.2),transparent 60%),linear-gradient(170deg,#0b1640,#070f2b 55%,#050b20);background-attachment:fixed}
+.wrap{max-width:760px;margin:0 auto;padding:20px 18px 70px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+header img{height:64px;max-width:60%;object-fit:contain}
+.pill{font-weight:800;font-size:12px;letter-spacing:2px;color:#2a1600;padding:9px 16px;border-radius:30px;background:linear-gradient(90deg,#ffd75e,var(--gold2));white-space:nowrap}
+.eyebrow{margin-top:30px;font-weight:600;font-size:12px;letter-spacing:4px;color:var(--cyan)}
+.eyebrow b{color:var(--gold)}
+h1{font-weight:900;font-size:clamp(34px,8vw,58px);line-height:1.04;letter-spacing:-1.5px;margin-top:8px;
+  background:linear-gradient(95deg,#fff 0%,#ffe9a8 55%,#ffb52e);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{margin-top:12px;color:var(--muted);font-size:16px;max-width:560px}.sub b{color:var(--ink);font-weight:600}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.fact{padding:8px 14px;border-radius:30px;border:1px solid var(--line);background:var(--card);font-size:13px;font-weight:600}
+.fact span{color:var(--gold)}
+h2{font-size:22px;font-weight:800;margin:34px 0 4px}
+.hint{color:var(--muted);font-size:14px;margin-bottom:14px}
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cat{position:relative;cursor:pointer;border-radius:18px;padding:16px 14px;border:1.5px solid var(--line);background:var(--card);transition:border-color .15s,background .15s}
+.cat input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.cat:has(input:checked){border-color:var(--gold);background:linear-gradient(180deg,rgba(255,176,0,.2),rgba(255,122,0,.06))}
+.cat:has(input:focus-visible){outline:3px solid var(--cyan);outline-offset:2px}
+.cat .off{font-size:11px;font-weight:800;letter-spacing:1px;color:var(--cyan)}
+.cat .lbl{font-weight:700;font-size:15px;line-height:1.25;margin-top:4px}
+.cat .pr{font-weight:900;font-size:30px;line-height:1.1;margin-top:6px}
+.cat .pr s{font-size:13px;font-weight:500;color:var(--muted);margin-left:6px}
+.cat.free .pr{color:#5cf0a8}
+.bonus{margin-top:12px;padding:12px 16px;border-radius:14px;border:1.5px dashed rgba(255,200,61,.7);background:rgba(255,200,61,.08);font-size:14px}
+.bonus b{color:var(--gold)}
+form{margin-top:6px}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.f .full{grid-column:1/-1}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
+label small{font-weight:400;color:var(--muted)}
+input[type=text],input[type=email],input[type=tel],input[type=number]{width:100%;padding:13px 14px;border-radius:12px;border:1.5px solid var(--line);background:rgba(255,255,255,.07);color:var(--ink);font:inherit;font-size:16px}
+input::placeholder{color:#7f8db3}
+input:focus-visible{outline:3px solid var(--cyan);outline-offset:1px;border-color:var(--cyan)}
+.cond[hidden]{display:none}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted);font-weight:400}
+.consent input{margin-top:4px;width:18px;height:18px;flex:none;accent-color:var(--gold)}
+.hp{position:absolute;left:-9999px;height:0;overflow:hidden}
+button.go{width:100%;margin-top:6px;padding:17px;border:0;border-radius:16px;cursor:pointer;font:inherit;font-weight:800;font-size:18px;color:#fff;
+  background:linear-gradient(90deg,var(--blue),#5a5cff);box-shadow:0 10px 36px rgba(47,123,255,.45)}
+button.go:disabled{opacity:.6;cursor:wait}
+button.go:focus-visible,button.alt:focus-visible,a.btn:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.err{margin-top:12px;padding:12px 14px;border-radius:12px;background:rgba(255,107,107,.14);border:1px solid rgba(255,107,107,.5);color:#ffb3b3;font-size:14px}
+.panel{margin-top:26px;border-radius:24px;padding:26px 22px;border:1.5px solid var(--line);background:var(--card)}
+.panel.ok{border-color:rgba(54,212,138,.6);background:linear-gradient(180deg,rgba(54,212,138,.14),rgba(54,212,138,.03))}
+.ref{display:inline-block;margin-top:8px;padding:8px 16px;border-radius:12px;background:rgba(0,0,0,.3);font-weight:800;font-size:22px;letter-spacing:3px;color:var(--gold)}
+.amt{font-weight:900;font-size:46px;line-height:1;margin:14px 0 4px}
+.steps{margin:14px 0 0 20px;color:var(--muted);font-size:14px;display:grid;gap:6px}.steps b{color:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+a.btn,button.alt{display:inline-block;text-align:center;padding:13px 20px;border-radius:14px;font:inherit;font-weight:700;font-size:15px;text-decoration:none;cursor:pointer;color:#2a1600;border:0;background:linear-gradient(90deg,#ffd75e,var(--gold2))}
+button.alt.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.upi{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.28);word-break:break-all}
+.upi code{font-weight:700;color:var(--ink);font-size:16px}
+.txn{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+footer{margin-top:44px;text-align:center;color:var(--muted);font-size:13px}
+.help{margin-top:34px;padding:16px 18px;border-radius:16px;border:1px solid var(--line);background:var(--card);text-align:center;font-size:14px}
+.help b{display:block;font-size:15px;margin-bottom:8px}
+.help .links{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.help a{color:var(--ink);text-decoration:none;font-weight:600;padding:9px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06)}
+.help a:hover{border-color:var(--gold)}
+.help a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+footer i{display:block;font-family:Georgia,serif;font-size:20px;color:var(--gold);margin-bottom:4px}
+@media(max-width:560px){.f{grid-template-columns:1fr}.cat .pr{font-size:26px}header img{height:54px;max-width:55%}.pill{font-size:10px;letter-spacing:1px;padding:8px 11px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style></head>
+<body><div class="wrap">
+<header><img src="logo.png" alt="Core2CloudX"><span class="pill">VIJAYADASAMI OFFER</span></header>
+
+<div class="eyebrow"><b>3-DAY</b> LIVE ONLINE WORKSHOP · GENERATIVE AI</div>
+<h1>Build Your Own AI Agent in 3 Days</h1>
+<p class="sub">Go from your first prompt to a <b>working custom AI agent</b>, built live with a mentor. For professionals upskilling and students.</p>
+<div class="facts">
+  <div class="fact"><span>17 · 18 · 19</span> Oct 2026</div>
+  <div class="fact"><span>3 hrs</span> a day</div>
+  <div class="fact"><span>9 hrs</span> hands-on</div>
+  <div class="fact"><span>1-year</span> 1:1 support</div>
+</div>
+
+<div id="formView">
+<h2>1. Choose your registration</h2>
+<p class="hint">Course fee <s>₹4,999</s>. Festive prices for this batch only.</p>
+<form id="reg" novalidate>
+  <div class="cats" id="cats" role="radiogroup" aria-label="Registration type"></div>
+  <div class="bonus"><b>Bonus for everyone:</b> 1-year 1:1 support for technical doubts, project help and career-move guidance.</div>
+
+  <h2>2. Your details</h2>
+  <div class="f">
+    <div class="full"><label for="name">Full name</label><input id="name" type="text" autocomplete="name" placeholder="As it should appear on your certificate" required></div>
+    <div><label for="email">Email</label><input id="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required></div>
+    <div><label for="phone">Mobile / WhatsApp</label><input id="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="10-digit number" required></div>
+    <div class="cond" data-for="professional student college_group" id="orgWrap"><label for="organisation" id="orgLabel">Company / role</label><input id="organisation" type="text" autocomplete="organization"></div>
+    <div><label for="city">City <small>(optional)</small></label><input id="city" type="text" autocomplete="address-level2"></div>
+    <div class="cond" data-for="college_group" hidden><label for="group_name">Group / coordinator name</label><input id="group_name" type="text" placeholder="e.g. CSE 3rd year, Priya (coordinator)"></div>
+    <div class="cond" data-for="college_group" hidden><label for="group_size">Students in your group</label><input id="group_size" type="number" min="1" max="1000" inputmode="numeric"></div>
+    <div class="cond full" data-for="existing" hidden><label for="existing_user_id">Email or ID used on our earlier course</label><input id="existing_user_id" type="text" placeholder="So we can verify your free seat"></div>
+    <div class="hp" aria-hidden="true"><label for="website">Website</label><input id="website" type="text" tabindex="-1" autocomplete="off"></div>
+    <label class="consent full"><input id="consent" type="checkbox"> <span>I agree to be contacted by Core2CloudX on email and WhatsApp about this workshop.</span></label>
+  </div>
+  <div id="err" class="err" role="alert" hidden></div>
+  <div style="height:14px"></div>
+  <button class="go" id="submit" type="submit">Reserve my seat</button>
+</form>
+</div>
+
+<div id="doneView" hidden></div>
+
+<div class="help" id="help"><b>Questions? Talk to us</b><div class="links"><a id="hWa" href="#" target="_blank" rel="noopener">WhatsApp</a><a id="hCall" href="#">Call 73388 84345</a><a id="hMail" href="#">connect@core2cloud.in</a></div></div>
+<footer><i>Vision to Version</i>Core2CloudX</footer>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const rupees = n => '₹' + Number(n).toLocaleString('en-IN');
+const params = new URLSearchParams(location.search);
+const source = (params.get('src') || params.get('utm_source') || document.referrer && new URL(document.referrer).hostname.replace(/^www\./,'') || 'direct').slice(0, 40);
+let cfg, category = null;
+
+const OFF = { professional: '80% OFF', student: '90% OFF', college_group: '94% OFF', existing: 'THANK YOU' };
+const WHO = { professional: 'Working professional', student: 'Student', college_group: 'College group (per student)', existing: 'Existing user' };
+
+function drawCats() {
+  $('cats').innerHTML = Object.entries(cfg.categories).map(([k, c]) => `
+    <label class="cat ${c.price === 0 ? 'free' : ''}"><input type="radio" name="cat" value="${k}">
+      <div class="off">${OFF[k] || ''}</div><div class="lbl">${WHO[k] || c.label}</div>
+      <div class="pr">${c.price === 0 ? 'FREE' : rupees(c.price)}${c.price ? `<s>${rupees(cfg.basePrice)}</s>` : ''}</div></label>`).join('');
+  $('cats').addEventListener('change', e => { category = e.target.value; syncFields(); });
+  const pre = params.get('type');
+  const first = $('cats').querySelector(`input[value="${cfg.categories[pre] ? pre : ''}"]`);
+  if (first) { first.checked = true; category = first.value; syncFields(); }
+}
+function syncFields() {
+  document.querySelectorAll('.cond').forEach(el => { el.hidden = !el.dataset.for.split(' ').includes(category); });
+  $('orgLabel').textContent = category === 'professional' ? 'Company / role' : 'College name';
+  $('submit').textContent = !category ? 'Reserve my seat' : cfg.categories[category].price ? `Reserve my seat · ${rupees(cfg.categories[category].price)}` : 'Reserve my free seat';
+}
+function showErr(m) { const e = $('err'); e.textContent = m; e.hidden = !m; if (m) e.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+const val = id => $(id).value.trim();
+
+$('reg').addEventListener('submit', async ev => {
+  ev.preventDefault(); showErr('');
+  if (!category) return showErr('Choose who you are registering as.');
+  const body = { category, name: val('name'), email: val('email'), phone: val('phone'), organisation: val('organisation'), city: val('city'),
+    group_name: val('group_name'), group_size: val('group_size'), existing_user_id: val('existing_user_id'),
+    website: val('website'), consent: $('consent').checked, source };
+  $('submit').disabled = true;
+  try {
+    const r = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const j = await r.json();
+    if (!r.ok) { showErr(j.error); return; }
+    done(j, body);
+  } catch { showErr('Could not reach the server. Check your connection and try again.'); }
+  finally { $('submit').disabled = false; }
+});
+
+function manualPay(j) {
+  const upiLink = `upi://pay?pa=${encodeURIComponent(cfg.upiId)}&pn=${encodeURIComponent(cfg.upiName)}&am=${j.amount}&cu=INR&tn=${encodeURIComponent(j.ref + ' GenAI workshop')}`;
+  return `<div class="upi"><span>UPI ID</span><code id="upiId">${esc(cfg.upiId)}</code><button type="button" class="alt ghost" id="copy">Copy</button></div>
+    <div class="row"><a class="btn" href="${upiLink}">Pay ${rupees(j.amount)} with UPI app</a></div>
+    <ol class="steps"><li>Pay <b>${rupees(j.amount)}</b> to the UPI ID above. Put <b>${j.ref}</b> in the payment note.</li>
+    <li>Copy the <b>UPI transaction ID</b> from your payment app.</li><li>Paste it below so we can confirm your seat.</li></ol>
+    <div class="txn"><label for="txn">UPI transaction ID</label>
+      <div class="row" style="margin-top:0"><input id="txn" type="text" placeholder="12-digit transaction ID" style="flex:1;min-width:200px">
+      <button type="button" class="alt" id="sendTxn">Submit</button></div><div id="txnMsg" class="hint" style="margin-top:8px" role="status"></div></div>`;
+}
+
+function paidView(ref, first) {
+  $('doneView').innerHTML = `<div class="panel ok"><h2 style="margin:0">Payment received, ${esc(first)}. Your seat is confirmed.</h2>
+    <p class="hint" style="margin-top:6px">Joining details will come on your email and WhatsApp before 17 October.</p>
+    <div>Your reference</div><div class="ref">${esc(ref)}</div></div>`;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function loadCheckout() {
+  return new Promise((ok, no) => {
+    if (window.Razorpay) return ok();
+    const s = document.createElement('script'); s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    s.onload = ok; s.onerror = () => no(new Error('checkout_blocked')); document.head.appendChild(s);
+  });
+}
+
+async function payOnline(j, first) {
+  const btn = $('rzpPay'), msg = $('payMsg'); msg.style.color = ''; msg.textContent = '';
+  btn.disabled = true;
+  const fail = t => { msg.style.color = '#ffb3b3'; msg.textContent = t; btn.disabled = false; };
+  try {
+    const r = await fetch('/api/pay/order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ref: j.ref }) });
+    const o = await r.json();
+    if (!r.ok) return fail(o.error || 'Could not start the payment.');
+    await loadCheckout();
+    const rzp = new Razorpay({
+      key: o.keyId, amount: o.amount, currency: 'INR', name: 'Core2CloudX', description: 'GenAI Workshop · ' + o.ref, order_id: o.orderId,
+      prefill: { name: o.name, email: o.email, contact: o.phone }, notes: { ref: o.ref }, theme: { color: '#2f7bff' },
+      modal: { ondismiss: () => { btn.disabled = false; } },
+      handler: async resp => {
+        msg.textContent = 'Confirming your payment...';
+        try {
+          const v = await fetch('/api/pay/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(resp) });
+          const vj = await v.json();
+          if (v.ok) paidView(o.ref, first); else fail(vj.error || 'Could not confirm the payment.');
+        } catch { fail('Payment went through but we could not confirm it. Do not pay again. Your seat will be matched automatically, or contact us with ' + o.ref + '.'); }
+      },
+    });
+    rzp.on('payment.failed', e => fail((e.error && e.error.description) || 'Payment failed. You can try again.'));
+    rzp.open();
+  } catch (e) {
+    fail(e.message === 'checkout_blocked' ? 'Could not load the payment window. Check your connection or disable content blockers, then retry.' : 'Something went wrong. Please try again.');
+  }
+}
+
+function done(j, body) {
+  $('formView').hidden = true;
+  const v = $('doneView'); v.hidden = false;
+  const first = body.name.split(' ')[0];
+  const sub = body.category === 'college_group' ? ` · ${Number(body.group_size)} students × ${rupees(cfg.categories.college_group.price)}` : '';
+  let html;
+  if (j.status === 'verify') {
+    html = `<div class="panel ok"><h2 style="margin:0">You're in, ${esc(first)}.</h2>
+      <p class="hint" style="margin-top:6px">We will verify your earlier course account and confirm your free seat on email and WhatsApp.</p>
+      <div>Your reference</div><div class="ref">${j.ref}</div></div>`;
+  } else if (!cfg.payments) {
+    const msg = encodeURIComponent(`Hi, I registered for the GenAI workshop. My reference is ${j.ref}.`);
+    html = `<div class="panel ok"><h2 style="margin:0">You're registered, ${esc(first)}.</h2>
+      <p class="hint" style="margin-top:6px">We will contact you on WhatsApp at <b>${esc(body.phone)}</b> with the payment link and joining details.</p>
+      <div>Your reference</div><div class="ref">${j.ref}</div>
+      <div class="amt">${rupees(j.amount)}</div><div class="hint">${esc(j.category)}${sub}</div>
+      <div class="row"><a class="btn" href="https://wa.me/${cfg.whatsapp}?text=${msg}" target="_blank" rel="noopener">Message us on WhatsApp</a><a class="btn" style="background:var(--card);color:var(--ink);border:1px solid var(--line)" href="tel:+${cfg.whatsapp}">Call us</a></div></div>`;
+  } else {
+    let pay;
+    if (cfg.razorpay) {
+      pay = `<div class="row"><button type="button" class="alt" id="rzpPay" style="font-size:17px;padding:15px 26px">Pay ${rupees(j.amount)} securely</button></div>
+        <div class="hint" style="margin-top:8px">UPI, cards, netbanking and wallets. Payments are processed by Razorpay.</div>
+        <div id="payMsg" class="hint" style="margin-top:6px" role="status"></div>
+        ${cfg.upiId ? `<details style="margin-top:14px"><summary class="hint" style="cursor:pointer">Prefer to pay to a UPI ID directly?</summary>${manualPay(j)}</details>` : ''}`;
+    } else if (cfg.upiId) pay = manualPay(j);
+    else pay = `<p class="hint" style="margin-top:14px">We will send you payment details on email and WhatsApp shortly.</p>`;
+    html = `<div class="panel ok"><h2 style="margin:0">Seat reserved, ${esc(first)}.</h2>
+      <p class="hint" style="margin-top:6px">Complete the payment to confirm it.</p>
+      <div>Your reference</div><div class="ref">${j.ref}</div>
+      <div class="amt">${rupees(j.amount)}</div><div class="hint">${esc(j.category)}${sub}</div>${pay}</div>`;
+  }
+  v.innerHTML = html + `<p class="hint" style="margin-top:14px">Save your reference <b>${j.ref}</b>.${cfg.payments ? ` Workshop joining details will come on ${esc(body.email)} and WhatsApp.` : ' Keep WhatsApp on for our message.'}</p>`;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  $('rzpPay')?.addEventListener('click', () => payOnline(j, first));
+  $('copy')?.addEventListener('click', async () => { try { await navigator.clipboard.writeText(cfg.upiId); $('copy').textContent = 'Copied'; } catch { const r = document.createRange(); r.selectNodeContents($('upiId')); getSelection().removeAllRanges(); getSelection().addRange(r); } });
+  $('sendTxn')?.addEventListener('click', async () => {
+    const m = $('txnMsg'); m.style.color = '';
+    const r = await fetch('/api/payment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ref: j.ref, txn_ref: $('txn').value }) });
+    const k = await r.json().catch(() => ({}));
+    if (r.ok) { m.style.color = '#5cf0a8'; m.textContent = 'Received. We will confirm your seat once we match the payment.'; $('sendTxn').disabled = true; }
+    else { m.style.color = '#ffb3b3'; m.textContent = k.error || 'Could not save. Try again.'; }
+  });
+}
+function wireHelp() {
+  const n = cfg.whatsapp, pretty = n.length === 12 ? n.slice(2, 7) + ' ' + n.slice(7) : n;
+  $('hWa').href = 'https://wa.me/' + n + '?text=' + encodeURIComponent('Hi, I have a question about the GenAI workshop.');
+  $('hCall').href = 'tel:+' + n; $('hCall').textContent = 'Call ' + pretty;
+  $('hMail').href = 'mailto:' + cfg.email; $('hMail').textContent = cfg.email;
+}
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+fetch('/api/config').then(r => r.json()).then(c => { cfg = c; drawCats(); wireHelp(); }).catch(() => showErr('Could not load the page. Please refresh.'));
+</script></body></html>

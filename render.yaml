@@ -1,0 +1,25 @@
+# Render Blueprint: one web service + a persistent disk for the SQLite database.
+# The disk needs a paid plan (starter is the cheapest that supports disks).
+services:
+  - type: web
+    name: genai-workshop
+    runtime: docker
+    plan: starter
+    region: singapore
+    healthCheckPath: /api/config
+    autoDeploy: true
+    disk:
+      name: registrations
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: DB_PATH
+        value: /data/registrations.db
+      - key: ADMIN_PASSWORD
+        sync: false        # you type this in the Render dashboard
+      - key: WHATSAPP_NUMBER
+        value: "917338884345"
+      - key: CONTACT_EMAIL
+        value: connect@core2cloud.in
+      - key: PAYMENTS
+        value: "off"
